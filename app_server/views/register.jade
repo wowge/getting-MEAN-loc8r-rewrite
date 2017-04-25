@@ -1,0 +1,53 @@
+//
+   Created by gechao on 20/04/2017.
+
+extends layout
+
+block content
+    .row.page-header
+        .col-xs-12
+            h1 #{pageheader.title}
+    .row
+        .col-xs-12.col-md-6
+            p.lead Already a member,&nbsp;
+                a#logIn(href='') login &nbsp;
+                |instead
+            - if (err === 'val')
+                .alert.alert-danger(role='alert') All fields required, please try again!
+            form#register.form-horizontal(action='' method='post' role='form')
+                .form-group
+                    label.col-xs-12.col-sm-2.control-label(for='name') Name
+                    .col-xs-12.col-sm-10
+                        input#name.form-control(name='name' type='text')
+                .form-group
+                    label.col-xs-12.col-sm-2.control-label(for='email') Email
+                    .col-xs-12.col-sm-10
+                        input#email.form-control(name='email' type='email')
+                .form-group
+                    label.col-xs-12.col-sm-2.control-label(for='passw') Password
+                    .col-xs-12.col-sm-10
+                        input#passw.form-control(name='passw' type='password')
+                button#regButton.btn.btn-default.pull-right(type='submit') Register
+        .col-xs-12.col-md-6
+block scripts
+    script.
+        $(function () {
+            $(':text:first').focus();
+        });
+        $('#regButton').click(function () {
+            $('#register').validate({
+                rules: {
+                    name: {
+                        required: true
+                    },
+                    email: {
+                        required: true
+                    },
+                    passw: {
+                        required: true,
+                        maxlength: 20
+                    }
+                }
+            });
+        });
+        $('#logIn').prop('href', '/login/' + location.search);

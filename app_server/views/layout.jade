@@ -1,0 +1,71 @@
+doctype html
+html
+  head
+    meta(name='viewport', content='width=device-width,initial-scale=1.0')
+    //meta=(name="viewport", content="width=980,initial-scale=1")
+
+    title= title
+    //link(rel = 'stylesheet', href='/bootstrap/css/amelia.bootstrap.css')
+    link(rel='stylesheet',href='/bootstrap/css/bootstrap.min.css')
+    link(rel='stylesheet', href='/stylesheets/style.css')
+  body
+    .navbar.navbar-default.navbar-fixed-top
+      .container
+        .navbar-header
+          a.navbar-brand(href='/') Loc8r
+          button.navbar-toggle(type='button',data-toggle='collapse',data-target='#navbar-main')
+            span.icon-bar
+            span.icon-bar
+            span.icon-bar
+        #navbar-main.navbar-collapse.collapse
+          ul.nav.navbar-nav
+            li
+              a(href='/about') About
+          ul.nav.navbar-nav.navbar-right
+            li#register
+              a#registerLink Register
+            li#login
+              a#loginLink Login
+            li#logout.dropdown
+              a#user.dropdown-toggle(data-toggle='dropdown' href='')
+              ul.dropdown-menu(role='menu')
+                li
+                  a#logoutLink Logout
+    .container
+      //div(ng-view)
+      block content
+      footer
+        .row
+          .col-xs-12
+            small &copy; Charles shenzhen 2017
+
+      script(src='/javascripts/jquery.js')
+      script(src='/javascripts/jquery.validate.js')
+      script(src='/bootstrap/js/bootstrap.js')
+      script(src='/javascripts/client.js')
+      //script(src='/angularjs/angular.js')
+      //script(src='/javascripts/loc8rApp.js')
+      //script(src='/app.js')
+      //script(src='/lib/angular-route.min.js')
+      //script(src='/home/home.controller.js')
+      //script(src='/common/service/loc8rData.service.js')
+      //script(src='/common/service/geoLocation.service.js')
+      //script(src='/loc8r.min.js')
+      script.
+        if (!isLoggedIn()){
+            $('#logout').hide();
+            $('#registerLink')
+                .prop('href', '/register?lastPage=' + location);
+            $('#loginLink')
+                .prop('href', '/login?lastPage=' + location);
+        }else {
+            $('#register').hide();
+            $('#login').hide();
+            $('#user')
+                .prop('textContent', account.user)
+                .append('<span class="caret"></span>');
+            $('#logoutLink')
+                .prop('href', '/logout?lastPage=' + location);
+        }
+
+  block scripts

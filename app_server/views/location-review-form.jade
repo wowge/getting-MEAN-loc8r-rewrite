@@ -1,0 +1,64 @@
+//
+   Created by gechao on 03/03/2017.
+
+extends layout
+
+block content
+    .row.page-header
+        .col-xs-12
+            h1 #{pageHeader.title}
+    .row
+        .col-xs-12.col-md-6
+            form#addReview.form-horizontal(action='' method='post' role='form')
+                - if (err === 'val')
+                    .alert.alert-danger(role='alert') All fields required, please try again!
+                .form-group
+                    label.col-xs-10.col-sm-2.control-label(for='name') Name
+                    #name.col-xs-12.col-sm-10
+                .form-group
+                    label.col-xs-10.col-sm-2.control-label(for='rating') Rating
+                    .col-xs-12.col-sm-10
+                        select#rating.form-control.input-sm(name='rating')
+                            option 5
+                            option 4
+                            option 3
+                            option 2
+                            option 1
+                .form-group
+                    label.col-xs-2.control-label(for='review') Review
+                    .col-xs-10
+                        textarea#review.form-control(name='review' rows='5')
+                button#addButton.btn.btn-default.pull-right Add my review
+        .col-xs-12.col-md-4
+block scripts
+    script.
+        $(function () {
+           $('#rating').focus();
+        });
+        $('#addButton').click(function () {
+            $('#addReview').validate({
+                rules: {
+                    /*name: {
+                        required: true
+                    },*/
+                    rating: {
+                        required: true
+                    },
+                    review: {
+                        required: true,
+                        maxlength: 200
+                    }
+                }
+            })
+        })
+
+        if (!isLoggedIn()){
+            $('#rating').prop('disabled', true);
+            $('#review').prop('disabled', true);
+            $('#addButton').prop('disabled', true);
+        }else {
+            //console.log(currentUser.name);
+            $('#name').prop('textContent', account.user);
+        }
+
+        //console.log(isLoggedIn(), account.user, account.email);

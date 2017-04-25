@@ -1,0 +1,399 @@
+//
+   Created by gechao on 14/02/2017.
+//extends layout
+
+html(ng-app='myApp')
+    head
+        title Todo List
+        link(rel='stylesheet' href='/bootstrap/css/bootstrap.css')
+        link(rel='stylesheet' href='/bootstrap/css/bootstrap-theme.css')
+        script(src='/javascripts/angular.js')
+        //script(src='/javascripts/test.js')
+    body(ng-controller='todoCtrl')
+        .page-header
+            h1 {{todo.user}}'s Todo List &nbsp;
+                span.label.label-default(ng-hide='incompleteCount()==0' ng-class='warningLevel()').
+                    {{incompleteCount()}}
+        .panel
+            .input-group.col-md-6
+                input.form-control(ng-model='actionText')
+                span.input-group-btn
+                    button.btn.btn-default(ng-click='addNewItem(actionText)') Add
+            table.table.table-striped.table-bordered
+                thead
+                    tr
+                        td Description
+                        td Done
+                tbody
+                    tr(ng-repeat='item in todo.items | checkedItems:showComplete | orderBy:"action" ')
+                        td {{item.action}}
+                        td
+                            input(type='checkbox' ng-model='item.done')
+                        //td {{item.done}}
+                    tr
+                        td
+                            label.label.label-default Show complete list &nbsp;
+                                input(type='checkbox' ng-model='showComplete')
+        //input(ng-model='myInput')
+        //h1 Hello {{myInput}}
+        //.btn.btn-success {{'Angular'}}
+        //.btn.btn-success Bootstrap
+    script.
+        var model = {
+            user: 'Charlie'
+        };
+        var myApp = angular.module('myApp', []);
+        myApp.run(function ($http) {
+            $http.get('test.json').success(function (data) {
+                model.items = data;
+            });
+        });
+        myApp.controller('todoCtrl', function ($scope) {
+            $scope.todo = model;
+            $scope.incompleteCount = function () {
+                var count = 0;
+                angular.forEach($scope.todo.items, function (item) {
+                    if (!item.done){
+                        count++;
+                    }
+                });
+                return count;
+            };
+            $scope.warningLevel = function () {
+                return $scope.incompleteCount() < 3 ? 'label-success' : 'label-warning';
+            };
+            $scope.addNewItem = function (actionText) {
+                $scope.todo.items.push({
+                    action: actionText,
+                    done: false
+                });
+            };
+        });
+        myApp.filter('checkedItems', function () {
+            return function (items, showComplete) {
+                var result = [];
+                angular.forEach(items, function (item) {
+                    if (!item.done || showComplete){
+                        result.push(item);
+                    }
+                });
+                return result;
+            };
+        });
+
+//
+    body(ng-controller='myController')
+        h2 sum cost
+        form#order(action='',method='post')
+            p Quantity:
+                |&nbsp;
+                input(type='text', placeholder='Quantity', id='quantity', name='quant', ng-model='my')
+            h1 hello {{my}}
+            p Total cost:&nbsp;
+                |$
+                input(type='text',id='total',name='total')
+            input(type='submit',id='calc',value='Calculate')
+
+    script.
+        //$(':input').prop('disabled', true);
+        $(function () {
+            $(':text:first').focus();
+
+        });
+        $('.numOnly').blur(function () {
+            var quantityVal = $(this).val();
+            if (isNaN(quantityVal)){
+                alert('please enter a number');
+            }
+        });
+        $('#calc').click(function () {
+            $('#order').validate({
+                rules: {
+                    quant: {
+                        required: true,
+                        range: [1,2]
+                    },
+                    total: {
+                        //equalTo: '#quant'
+                    }
+                }
+            });
+        });
+
+        $('#total').focus(function () {
+
+            var unitPrice = 0.99;
+            var quantity = $('#quantity').val();
+            var totalPrice = unitPrice * quantity;
+            totalPrice = totalPrice.toFixed(2);
+            $('#total').val(totalPrice);
+        })
+//
+   document.getElementById('calc').addEventListener('click',function () {
+        var unitPrice = 0.99;
+        var quantity = $('#quantity').val();
+        var totalPrice = unitPrice * quantity;
+        totalPrice = totalPrice.toFixed(2);
+        $('#total').val(totalPrice);
+    });
+
+
+//append content
+    .container
+        .well.well-sm
+            form.form-inline
+                .form-group
+                    input(type='email',placeholder='Email address')#email.form-control
+                .form-group
+                    input(type='password',placeholder='Password')#password.form-control
+                .form-group
+                    input(type='text',placeholder='Disabled here',disabled).form-control
+                .form-group.has-success
+                    label(for='input-success').control-label Input with success
+                    input(type='input')#input-success.form-control
+                    //span.help-block wrong
+                    input(type='input',placeholder='large input field').form-control.input-lg
+                    input(type='input',placeholder='default input field').form-control
+                    input(type='input',placeholder='small input field').form-control.input-sm
+                .checkbox
+                    label
+                        input(type='checkbox')
+                        label Remember me
+                .radio
+                    label
+                        input(type='radio',value='male')
+                        label male
+                button(type='submit').btn.btn-primary Log in
+
+//        form.form-horizontal
+            .form-group
+                label(for='name').col-xs-2 Your name
+                .col-xs-10
+                    input(placeholder='input your name',type='text')#name.form-control
+            .form-group
+                label(for='email').col-xs-2 Email
+                .col-xs-10
+                    input(type='email',placeholder='Email')#email.form-control
+            .form-group
+                label(for='phone').col-xs-2 Phone number
+                .col-xs-10
+                    input(type='text',placeholder='phone num')#phone.form-control
+            .form-group
+                label(for='comments').col-xs-2 Comments
+                .col-xs-10
+                    textarea(placeholder='comments')#comments.form-control
+            .col-xs-10.col-xs-offset-2
+                button(type='submit').btn.btn-primary submit
+                button(type='reset').btn.btn-default reset
+//    .container
+        h3 jump start Bootstrap
+            span.label.label-danger new
+        a(href='#').btn.btn-default click
+        a(href='#').btn.btn-danger.btn-lg big red
+        a(href='#').btn.btn-success.btn-sm medium green
+        a(href='#').btn.btn-primary.btn-xs small dark-blue
+        span.glyphicon.glyphicon-heart
+        .well.well-lg
+            p well being
+                span.badge 12
+        //.navbar.navbar-default
+            .container-fluid
+                .navbar-header
+                    button(type='button',data-toggle='collapse',data-target='#mynavbar-content').navbar-toggle
+                        span.icon-bar
+                        span.icon-bar
+                        span.icon-bar
+                    a(href='#').navbar-brand Site
+                #mynavbar-content.collapse.navbar-collapse
+                    ul.nav.navbar-nav
+                        li.active
+                            a(href='#') Home
+                        li
+                            a(href='#') Pricing
+                        li
+                            a(href='#') Contact
+                        li.dropdown
+                            a(href='#',data-toggle='dropdown').dropdown-toggle About
+                                b.caret
+                            ul.dropdown-menu
+                                li
+                                    a(href='#') Board of members
+                                li
+                                    a(href='#') Developer team
+                                li
+                                    a(href='#') Designer team
+                                li.divider
+                                li
+                                    a(href='#') Investor
+                                li
+                                    a(href='#') Share holders
+
+
+        //ul.nav.nav-pills.nav-stacked
+           li.active
+                a(href='#') About
+            li
+                a(href='#') Home
+//    .list-group
+        a(href='#').list-group-item.active
+            h4.list-group-item-heading item heading
+            p.list-group-item-text item text
+        a(href='#').list-group-item item2
+          span.badge 2
+        a(href='#').list-group-item item3
+          span.badge 3
+        a(href='#').list-group-item item4
+        a(href='#').list-group-item item5
+//    .container
+        .page-header
+            h1 Title
+                small subtitle
+        .row
+            .col-xs-3
+                .thumbnail
+                    img(src='/images/HelloWorld.png')
+                    .caption
+                        h3 cocos
+                        p Lorem ipsum dolor sit amet, consectetur ...
+                        p
+                            a.btn.btn-primary(href='#') Read more...
+
+        //.media
+            a(href='#').pull-left
+                img.media-object(src='/images/HelloWorld.png',alt='Cocos2d').col-md-6
+            .media-body
+                h4.media-heading Cocos2d
+                p a very powerful engine
+                .media
+                    a(href='#').pull-left
+                        img.media-object(src='/images/HelloWorld.png',alt='Cocos2d').col-md-3
+                .media-body
+                        h4.media-heading Cocos2d
+                        p a very powerful engine
+//    .panel.panel-info
+        .panel-heading Attention
+        .panel-body.
+            This behavior requires
+            your confirmation.
+        .panel-footer
+            a(href='#').btn.btn-danger.btn-sm Agree
+            a(href='#').btn.btn-default.btn-sm Decline
+//    div.container
+        div.row
+            div.col-md-9.col-md-push-3.col1
+                h1 Pushed column
+            div.col-md-3.col-md-pull-9.col2
+                h1 Pulled column
+        //div.row
+            div.col-md-6.col-md-offset-3.col1
+                h3 Column 1
+                div.col-md-6.col-md-offset-3.col3
+                    h3 Column 3
+                div.col-md-6.col4
+                    h3 Column 4
+            div.col-md-6.col2
+                h3 Column 2
+//    div.container
+        div.row
+            div.col-md-12.text-center
+                h1 My First Blog
+        br
+        div.row
+            div.col-md-4.col-sm-6.col-xs-12
+                h3 Title 1
+                p Content 1
+            div.col-md-4.col-sm-6.col-xs-12
+                h3 Title 2
+                p Content 2
+            div.col-md-4.col-sm-6.col-xs-12
+                h3 Title 3
+                p Content 3
+            div.col-md-4.col-sm-6.col-xs-12
+                h3 Title 4
+                p Content 4
+            div.col-md-4.col-sm-6.col-xs-12
+                h3 Title 5
+                p Content 5
+            div.col-md-4.col-sm-6.col-xs-12
+                h3 Title 6
+                p Content 6
+
+//append content
+    div.container
+    script.
+        $(document).ready(function() {
+            //alert('at last');
+        });
+    a(href='https://google.com').btn.btn-default Google
+    mixin input(name)
+        li(id = name.replace(/\s/g,'-'))
+            lable= name + ':'
+        block
+    form:ul
+        +input('favorite color')
+            input('type'='text')
+        +input('comment')
+            textarea Type your comment here.
+    mixin copyleft
+        | (&#596;)
+    p
+        +copyleft
+        | - charlie - 2017
+    mixin book(name,price)
+        li #{name} for #{price} $
+    ul#books
+        +book('Gone with the wind',10)
+        +book('On war',20)
+    - books = ['A','B','C']
+    - i=0
+    ul
+        while i<books.length
+            li=books[i]
+            - i++
+    select
+        for book,i in books
+            option(value=i) Book #{book}
+    - list = ['one','two','three']
+    ul
+        each i in list
+            li= i
+    - name = 'cha'
+    case name
+        when 'char'
+            h1 Hello char
+        default
+            h1 Hello #{name}
+    h1  How Jade's Indentation Works
+    p
+        |This is a demonstration
+        br
+        |of Jade's text blocks.
+    p#p.p.
+        <i>A simple Jade Example.</i>
+        <b>Here We explain the way that
+        the whitespace is translated
+        into blocks.</b>
+    p.
+        more text.
+    //- a silent single line comment
+    - var locationUrl = '/location'
+    ul: li.first: b: a(href='#{locationUrl}') foo
+    - var text = 'Happy V Day'
+    p #{text}!
+    p 2 * 3 = #{2*3}
+    - array = ['one', 'two', 'three']
+    pre=array[0]
+    - tag = 'section'
+    tag Got some content in here
+    - content = 'hello, <em>world<em>'
+    p!= content
+    ul
+    - for (var i=0;i<array.length;i++){
+        li=array[i]
+    -   }
+    - String.prototype.textCase =function(){
+    - return this.replace(/\w\S*/g,function(txt){
+    - return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    - });
+    - };
+    p= 'my name is'.textCase()

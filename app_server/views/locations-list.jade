@@ -1,0 +1,42 @@
+//
+   Created by gechao on 02/03/2017.
+
+extends layout
+
+include _includes/sharedFunctions
+block content
+    #banner.page-header
+        .row
+            .col-lg-6
+                h1= pageHeader.title
+                    small &nbsp;#{pageHeader.strapline}
+    .row
+        .col-xs-12.col-sm-8
+            //label(for='filter') Filter results
+            //input#filter(type='text' name='filter' ng-model='textFilter')
+            .error= message
+            //.error {{message}}
+            .row.list-group
+                each location in locations
+                    .col-xs-12.list-group-item
+                        h4
+                            a(href='/location/#{location._id}')= location.name
+                            //a(href='/location/{{location._id}}') {{location.name}}&nbsp;
+                            small(rating-stars rating='location.rating')
+                                +outputRating(location.rating)
+                                //|{{location.rating}}
+                            span.badge.pull-right.badge-default= location.distance
+                            //span.badge.pull-right.badge-default {{location.distance | formatDistance}}
+                        p.address= location.address
+                        //p.address {{location.address}}
+                        p
+                            each facility in location.facilities
+                                span.label.label-warning= facility
+                                | &nbsp;
+                            //span.label.label-warning(ng-repeat='facility in location.facilities')
+                                | {{facility}}
+
+
+        .col-xs-12.col-sm-4
+            p.lead= sidebar
+

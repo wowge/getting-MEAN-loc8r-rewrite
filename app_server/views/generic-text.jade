@@ -1,0 +1,14 @@
+//
+   Created by gechao on 06/03/2017.
+
+extends layout
+
+block content
+    #banner.page-header
+        .row
+            .col-sm-12.col-md-6
+                h1= title
+    .row
+        .col-sm-12.col-md-6
+            p !{content.replace(/\n/g,'<br/>')}
+

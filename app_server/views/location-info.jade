@@ -1,0 +1,77 @@
+//
+   Created by gechao on 02/03/2017.
+extends layout
+
+include _includes/sharedFunctions
+
+block content
+    .row.page-header
+        .col-lg-12
+            h1= pageHeader.title
+    .row
+        .col-xs-12.col-md-9
+            .row
+                .col-xs-12.col-sm-6
+                    p.rating
+                        +outputRating(location.rating)
+                    p= location.address
+                        .panel.panel-primary
+                            .panel-heading
+                                h2.panel-title Opening hours
+                            .panel-body
+                                each time in location.openingTimes
+                                    p
+                                        |#{time.days} :
+                                        if time.closed == true
+                                            | closed
+                                        else
+                                            | #{time.opening} - #{time.closing}
+                        .panel.panel-primary
+                            .panel-heading
+                                h2.panel-title Facilities
+                            .panel-body
+                                each facility in location.facilities
+                                    span.label.label-warning
+                                        span.glyphicon.glyphicon-ok
+                                        | &nbsp;#{facility}
+                                    | &nbsp;
+                .col-xs-12.col-sm-6.location-map
+                    .panel.panel-primary
+                        .panel-heading
+                            h2.panel-title Location map
+                        .panel-body
+                            //img.img-rounded.img-responsive(src='http://api.map.baidu.com/staticimage/v2?ak=PqsHrAn1tdK4TQNnUZbZU8jvk6ipij6I&center=113.997061,22.532308&markers=113.997061,22.532308&scale=2&markerStyles=s,A,0xff0000&width=400&height=350&zoom=17')
+                            img.img-rounded.img-responsive(src='http://api.map.baidu.com/staticimage/v2?ak=PqsHrAn1tdK4TQNnUZbZU8jvk6ipij6I&width=400&height=350&scale=2&center=#{location.coords.lng},#{location.coords.lat}&labels=#{location.coords.lng},#{location.coords.lat}&zoom=18&labelStyles=cafe,1,40,0xffffff,0xff0000,1')
+
+            .row
+                .col-xs-12
+                    .panel.panel-primary.review-panel
+                        .panel-heading
+                            a#add.btn.btn-default.pull-right.btn-xs(href='/location/#{location._id}/reviews/new') Add review
+                            #rmd.pull-right Please log in to add reviews
+                            h2.panel-title Customer reviews
+                        .panel-body.review-container
+                            each review in location.reviews
+                                .row
+                                    .review
+                                        .well.well-sm.review-header
+                                            span.rating
+                                                +outputRating(review.rating)
+                                            span.reviewAuthor= review.author
+                                            small.reviewTimestamp
+                                                +formatDate(review.createOn)
+                                        .col-xs-12
+                                            p !{(review.reviewText).replace(/\n/g,'<br/>')}
+        .col-xs-12.col-md-3
+            p.lead #{location.name} #{sidebar.context}
+            p #{sidebar.callToAction}
+block scripts
+  script.
+    if (!isLoggedIn()){
+        //console.log($('#add').prop('disabled'));
+        $('#add').hide();
+        $('#rmd').show();
+    }else {
+      $('#add').show();
+      $('#rmd').hide();
+    }

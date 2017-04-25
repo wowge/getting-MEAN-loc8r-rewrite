@@ -1,0 +1,58 @@
+//
+   Created by gechao on 23/04/2017.
+
+//
+   Created by gechao on 20/04/2017.
+
+extends layout
+
+block content
+    .row.page-header
+        .col-xs-12
+            h1 #{pageheader.title}
+    .row
+        .col-xs-12.col-md-6
+            p.lead Not a member? Please &nbsp;
+                a#reg(href='') register &nbsp;
+                |first
+            - if (err === 'val')
+                .alert.alert-danger(role='alert') All fields required, please try again!
+            - if (err === 'auth')
+                .alert.alert-danger(role='alert') Please log in first!
+            form#login.form-horizontal(action='' method='post' role='form')
+                //.form-group
+                    label.col-xs-12.col-sm-2.control-label(for='name') Name
+                    .col-xs-12.col-sm-10
+                        input#name.form-control(name='name' type='text')
+                .form-group
+                    label.col-xs-12.col-sm-2.control-label(for='email') Email
+                    .col-xs-12.col-sm-10
+                        input#email.form-control(name='email' type='email')
+                .form-group
+                    label.col-xs-12.col-sm-2.control-label(for='passw') Password
+                    .col-xs-12.col-sm-10
+                        input#passw.form-control(name='passw' type='password')
+                button#loginButton.btn.btn-default.pull-right(type='submit') Login
+        .col-xs-12.col-md-6
+block scripts
+    script.
+        $(function () {
+            $('#email').focus();
+        });
+        $('#loginButton').click(function () {
+            $('#login').validate({
+                rules: {
+                    /*name: {
+                        required: true
+                    },*/
+                    email: {
+                        required: true
+                    },
+                    passw: {
+                        required: true,
+                        maxlength: 20
+                    }
+                }
+            });
+        });
+        $('#reg').prop('href', '/register/' + location.search);
