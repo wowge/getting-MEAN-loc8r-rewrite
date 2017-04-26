@@ -39,33 +39,62 @@ html
           .col-xs-12
             small &copy; Charles shenzhen 2017
 
-      script(src='/javascripts/jquery.js')
-      script(src='/javascripts/jquery.validate.js')
-      script(src='/bootstrap/js/bootstrap.js')
-      script(src='/javascripts/client.js')
-      //script(src='/angularjs/angular.js')
-      //script(src='/javascripts/loc8rApp.js')
-      //script(src='/app.js')
-      //script(src='/lib/angular-route.min.js')
-      //script(src='/home/home.controller.js')
-      //script(src='/common/service/loc8rData.service.js')
-      //script(src='/common/service/geoLocation.service.js')
-      //script(src='/loc8r.min.js')
-      script.
-        if (!isLoggedIn()){
-            $('#logout').hide();
-            $('#registerLink')
-                .prop('href', '/register?lastPage=' + location);
-            $('#loginLink')
-                .prop('href', '/login?lastPage=' + location);
-        }else {
-            $('#register').hide();
-            $('#login').hide();
-            $('#user')
-                .prop('textContent', account.user)
-                .append('<span class="caret"></span>');
-            $('#logoutLink')
-                .prop('href', '/logout?lastPage=' + location);
-        }
 
+  script(src='/javascripts/jquery.js')
+  script(src='/javascripts/jquery.validate.js')
+  script(src='/bootstrap/js/bootstrap.js')
+  script(src='/javascripts/client.js')
+  //script(src='/angularjs/angular.js')
+  //script(src='/javascripts/loc8rApp.js')
+  //script(src='/app.js')
+  //script(src='/lib/angular-route.min.js')
+  //script(src='/home/home.controller.js')
+  //script(src='/common/service/loc8rData.service.js')
+  //script(src='/common/service/geoLocation.service.js')
+  //script(src='/loc8r.min.js')
+  script.
+      if (!isLoggedIn()) {
+          $('#logout').hide();
+          $('#registerLink')
+              .prop('href', '/register?lastPage=' + location);
+          $('#loginLink')
+              .prop('href', '/login?lastPage=' + location);
+      } else {
+          $('#register').hide();
+          $('#login').hide();
+          $('#user')
+              .prop('textContent', account.user)
+              .append('<span class="caret"></span>');
+          $('#logoutLink')
+              .prop('href', '/logout?lastPage=' + location);
+      }
+
+      /*var cbSuccess = function (position) {
+       var lat = position.coords.latitude;
+       var lng = position.coords.longitude;
+       console.log(JSON.stringify(position));
+       };
+       var cbError = function (err) {
+       console.log(err);
+       };
+       if (navigator.geolocation){
+       navigator.geolocation.getCurrentPosition(cbSuccess, cbError);
+       }else {
+       console.log('geolocation not support');
+       }*/
+
+      var cbSuccess = function (position) {
+          //console.log(position.coords.longitude, position.coords.latitude, '//lng lat');
+          document.cookie = 'loc8r_lng=' + position.coords.longitude;
+          document.cookie = 'loc8r_lat=' + position.coords.latitude;
+      };
+      var cbError = function (err) {
+          document.cookie = 'loc8r_lng=0';
+          document.cookie = 'loc8r_lat=0';
+          //console.log(err);
+      };
+      var geoOptions = {
+          enableHighAccuracy: true
+      };
+      var watchId = navigator.geolocation.watchPosition(cbSuccess, cbError, geoOptions);
   block scripts

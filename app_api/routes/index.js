@@ -16,7 +16,7 @@ var auth = jwt({
     userProperty: 'payload'
 });
 
-router.get('/locations',ctrlLocations.locationsListByDistance);
+router.get('/locations', auth, ctrlLocations.locationsListByDistance);
 router.post('/locations',ctrlLocations.locationsCreate);
 router.get('/locations/:locationid',ctrlLocations.locationsReadOne);
 router.put('/locations/:locationid',ctrlLocations.locationsUpdateOne);

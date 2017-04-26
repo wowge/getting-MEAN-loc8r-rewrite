@@ -16,6 +16,10 @@ var userSchema = new mongoose.Schema({
         required: true,
         type: String
     },
+    coords: {
+        required: true,
+        type: [Number]
+    },
     salt: String,
     hash: String
 });

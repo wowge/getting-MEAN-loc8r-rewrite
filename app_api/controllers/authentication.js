@@ -20,6 +20,7 @@ module.exports.register = function (req, res) {
     user.name = req.body.name;
     user.email = req.body.email;
     user.setPassword(req.body.password);
+    user.coords = [parseFloat(req.body.lng), parseFloat(req.body.lat)];
     user.save(function (err) {
         var token;
         if (err){

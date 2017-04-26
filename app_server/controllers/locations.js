@@ -116,22 +116,30 @@ module.exports.homelist = function (req, res) {
         method : 'GET',
         json : {},
         qs : {
-            lng : 113.9737819,
-            lat : 22.5917434,
-            //lng: 0,
-            //lat: 0,
+            lng : req.cookies.loc8r_lng,
+            lat : req.cookies.loc8r_lat,
             maxDistance : 10000
+        },
+        headers: {
+            Authorization: 'Bearer ' + req.cookies.loc8r_token
         }
     };
     request(requestOptions, function (err, response, body) {
-        var data;
-        data = body;
-        if (response.statusCode === 200 && data.length > 0){
-            for (var i = 0; i < data.length; i ++){
-                data[i].distance = _formatDistance(data[i].distance);
+        if (response.statusCode === 200){
+            var data;
+            data = body;
+            if (data.length > 0){
+                for (var i = 0; i < data.length; i ++){
+                    data[i].distance = _formatDistance(data[i].distance);
+                }
             }
+            renderHomepage(req, res, data);
+        }else if (response.statusCode === 401){
+            renderHomepage(req, res, body);
+        }else {
+            console.log(body);
+            _showError(req, res, response.statusCode);
         }
-        renderHomepage(req, res, data);
 
     //renderHomepage(req, res);//using angular
      });

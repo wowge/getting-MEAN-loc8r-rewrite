@@ -49,7 +49,9 @@ module.exports.doRegister = function (req, res) {
    postData = {
         name: req.body.name,
        email: req.body.email,
-       password: req.body.passw
+       password: req.body.passw,
+       lat: req.cookies.loc8r_lat,
+       lng: req.cookies.loc8r_lng
    };
    path = '/api/register';
    requestOptions = { 
@@ -64,6 +66,7 @@ module.exports.doRegister = function (req, res) {
            if (response.statusCode === 201){
                //console.log(body);
                res
+                   //.cookie('loc8r_token', body.token,{httpOnly:false, secure:false})
                    .cookie('loc8r_token', body.token,{httpOnly:true, secure:true})
                    .cookie('loc8r_user', body.user)
                    .cookie('loc8r_email', body.email)
@@ -108,6 +111,7 @@ module.exports.doLogin = function (req, res) {
             if (response.statusCode === 201){
                 //console.log(body);
                 res
+                    //.cookie('loc8r_token',body.token,{httpOnly:false, secure:false})
                     .cookie('loc8r_token',body.token,{httpOnly:true, secure:true})
                     .cookie('loc8r_user', body.user)
                     .cookie('loc8r_email', body.email)

@@ -14,7 +14,7 @@ block content
         .col-xs-12.col-sm-8
             //label(for='filter') Filter results
             //input#filter(type='text' name='filter' ng-model='textFilter')
-            .error= message
+            #error.error= message
             //.error {{message}}
             .row.list-group
                 each location in locations
@@ -40,3 +40,9 @@ block content
         .col-xs-12.col-sm-4
             p.lead= sidebar
 
+block scripts
+  script.
+    if (!isLoggedIn()){
+        $('#error')
+            .prop('textContent', 'Login first, then enjoy loc8r!');
+    }
