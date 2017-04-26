@@ -11,6 +11,13 @@ var passport = require('passport');//before db require
 require('./app_api/models/db');
 require('./app_api/config/passport');// after db require, before route definition
 var app = express();
+app.use('*', function (req, res, next) {
+    if (req.header('x-forwarded-proto') !== 'https' && process.env.NODE_ENV === 'production'){
+        res.redirect('https://loc8r4u.herokuapp.com' + req.path);
+    }else {
+        next();
+    }
+});
 app.use(express.static(path.join(__dirname, 'public')));
 //app.use(express.static(path.join(__dirname, 'app_client')));
 app.use(passport.initialize());

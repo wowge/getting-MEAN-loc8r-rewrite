@@ -64,13 +64,20 @@ module.exports.doRegister = function (req, res) {
    }else {
        request(requestOptions, function (err, response, body) {
            if (response.statusCode === 201){
-               //console.log(body);
-               res
-                   //.cookie('loc8r_token', body.token,{httpOnly:false, secure:false})
-                   .cookie('loc8r_token', body.token,{httpOnly:true, secure:true})
-                   .cookie('loc8r_user', body.user)
-                   .cookie('loc8r_email', body.email)
-                   .redirect(req.query.lastPage ? req.query.lastPage : '/');
+               if (process.env.NODE_ENV === 'production'){
+                   res
+                       .cookie('loc8r_token', body.token,{httpOnly:true, secure:true})
+                       .cookie('loc8r_user', body.user)
+                       .cookie('loc8r_email', body.email)
+                       .redirect(req.query.lastPage ? req.query.lastPage : '/');
+               }else {
+                   res
+                       .cookie('loc8r_token', body.token,{httpOnly:false, secure:false})
+                       .cookie('loc8r_user', body.user)
+                       .cookie('loc8r_email', body.email)
+                       .redirect(req.query.lastPage ? req.query.lastPage : '/');
+               }
+
            }else if (response.statusCode === 400 && body.name && body.name === 'ValidationError'){
                res.redirect('/register' + '?err=val');
            }else {
@@ -109,13 +116,19 @@ module.exports.doLogin = function (req, res) {
     }else {
         request(requestOptions, function (err, response, body) {
             if (response.statusCode === 201){
-                //console.log(body);
-                res
-                    //.cookie('loc8r_token',body.token,{httpOnly:false, secure:false})
-                    .cookie('loc8r_token',body.token,{httpOnly:true, secure:true})
-                    .cookie('loc8r_user', body.user)
-                    .cookie('loc8r_email', body.email)
-                    .redirect(req.query.lastPage ? req.query.lastPage : '/');
+                if (process.env.NODE_ENV === 'production'){
+                    res
+                        .cookie('loc8r_token',body.token,{httpOnly:true, secure:true})
+                        .cookie('loc8r_user', body.user)
+                        .cookie('loc8r_email', body.email)
+                        .redirect(req.query.lastPage ? req.query.lastPage : '/');
+                }else{
+                    res
+                        .cookie('loc8r_token',body.token,{httpOnly:false, secure:false})
+                        .cookie('loc8r_user', body.user)
+                        .cookie('loc8r_email', body.email)
+                        .redirect(req.query.lastPage ? req.query.lastPage : '/');
+                }
             }else if (response.statusCode === 400 && body.name && body.name === 'ValidationError'){
                 res.redirect('/login' + '?err=val');
             }else {
