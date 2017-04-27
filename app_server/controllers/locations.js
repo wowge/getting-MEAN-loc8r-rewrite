@@ -14,7 +14,10 @@ if (process.env.NODE_ENV === 'production'){
 function renderHomepage(req, res, responseBody) {
     /* comment out for using angular*/
     var message;
-    if (!(responseBody instanceof Array)){
+    if (responseBody.message && responseBody.message === 'UnauthorizedError:jwt malformed'){
+        message = 'Please login first to enjoy loc8r!';
+        responseBody = [];
+    }else if (!(responseBody instanceof Array)){
         message = 'API lookup error';
         responseBody = [];
     }else if (!responseBody.length){
@@ -135,9 +138,10 @@ module.exports.homelist = function (req, res) {
             }
             renderHomepage(req, res, data);
         }else if (response.statusCode === 401){
+            //console.log(body);
             renderHomepage(req, res, body);
         }else {
-            console.log(body);
+            //console.log(body);
             _showError(req, res, response.statusCode);
         }
 

@@ -1,5 +1,5 @@
 node_modules
 .env
-.idea/vcs.xml
+.idea
 key.pem
 cert.pem
