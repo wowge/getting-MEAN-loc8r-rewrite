@@ -18,7 +18,12 @@ var userSchema = new mongoose.Schema({
     },
     coords: {
         required: true,
+        index: '2dsphere',
         type: [Number]
+    },
+    latest: {
+        type: Date,
+        default: Date.now()
     },
     salt: String,
     hash: String
@@ -35,10 +40,10 @@ userSchema.methods.generateJwt = function () {
     var expiry = new Date();
     expiry.setDate(expiry.getDate() + 1);
     return jwt.sign({
-        _id: this._id,
-        email: this.email,
-        name: this.name,
-        exp: parseInt(expiry.getTime()/1000)
+        _id: this._id
+        //email: this.email,
+        //name: this.name
+        //exp: parseInt(expiry.getTime()/1000)
     }, process.env.JWT_SECRET);
 };
 mongoose.model('User', userSchema);

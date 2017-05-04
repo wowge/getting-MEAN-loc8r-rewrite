@@ -1,0 +1,14 @@
+//
+   Created by gechao on 27/04/2017.
+
+extends layout
+
+block content
+  .row.page-header
+    .col-xs-12
+      h1 #{pageHeader.title}
+  .row
+    .col-xs-12.col-md-6
+      form#addLocation.form-horizontal(action='' method='post' role='form')
+        - if (err === 'val')
+          .alert.alert-danger(role='alert') All fields required, please try again!

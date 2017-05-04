@@ -16,9 +16,13 @@ block content
             //input#filter(type='text' name='filter' ng-model='textFilter')
             #error.error= message
             //.error {{message}}
+            a.btn.btn-default.pull-right.btn-md(href='/location/new') Add location
             .row.list-group
                 each location in locations
                     .col-xs-12.list-group-item
+                        .lng(style='display: none') #{location.coords[0]}
+                        .lat(style='display: none') #{location.coords[1]}
+                        .name(style='display: none') #{location.name}
                         h4
                             a(href='/location/#{location._id}')= location.name
                             //a(href='/location/{{location._id}}') {{location.name}}&nbsp;
@@ -37,12 +41,103 @@ block content
                                 | {{facility}}
 
 
-        .col-xs-12.col-sm-4
+        .col-xs-12.col-sm-4(style='height: 300px')
             p.lead= sidebar
+            #map(style='height: 100%')
 
 block scripts
   script.
+    var lng = [], lat = [], locName = [];
+    var lng_usr = account.lng, lat_usr = account.lat;
     if (!isLoggedIn()){
-        $('#error')
-            .prop('textContent', 'Login first, then enjoy loc8r!');
+        $('#error').prop('textContent', 'Login first, then enjoy loc8r!');
     }
+    $('.lng').each(function (index, elem) {
+        lng[index] = parseFloat($(elem).text());
+    });
+    $('.lat').each(function (index, elem) {
+        lat[index] = parseFloat($(elem).text());
+    });
+    $('.name').each(function (index, elem) {
+        locName[index] = $(elem).text();
+    });
+
+    var map = new BMap.Map('map');
+    var iconDefault;
+    var scaleCtl = new BMap.ScaleControl();
+    var navCtl = new BMap.NavigationControl();
+    var panoCtl = new BMap.PanoramaControl();
+    panoCtl.setOffset(new BMap.Size(20, 20));
+    //var panorama = new BMap.Panorama('panorama');
+
+    var convertor = new BMap.Convertor();
+    var points = [], markers = [], label = [];
+    for (var i = 0; i<lng.length; i++){
+      points.push(new BMap.Point(lng[i], lat[i]));
+    }
+    map.centerAndZoom(points[0], 16);
+    var cbTranslate = function (data) {
+        //alert(data.status);
+        if (data.status === 0) {
+            for (var i = 0; i < data.points.length; i++) {
+                markers.push(new BMap.Marker(data.points[i]));
+                map.addOverlay(markers[i]);
+                markers[i].setTitle(locName[i]);
+                markers[i].addEventListener('mouseover', function (e) {
+                  $('.list-group-item').each(function () {
+                      if ($('.name', $(this)).text() == e.target.getTitle()){
+                          $(this).show();
+                      }else {
+                          $(this).hide();
+                      }
+                  });
+                });
+                markers[i].addEventListener('mouseout', function (e) {
+                  $('.list-group-item').show();
+                });
+            }
+            iconDefault = markers[0].getIcon();
+            map.addControl(scaleCtl);
+            map.addControl(navCtl);
+            map.addControl(panoCtl);
+            //panorama.setPosition(data.points[0]);
+        }
+    };
+    convertor.translate(points, 1, 5, cbTranslate);
+
+    var convertor_usr = new BMap.Convertor();
+    var points_usr = [], marker_usr, label_usr;
+    points_usr.push(new BMap.Point(lng_usr, lat_usr));
+    var cbTranslate_usr = function (data) {
+        if(data.status === 0){
+            var icon_usr = new BMap.Icon('/images/location.png', new BMap.Size(17, 24), {anchor: new BMap.Size(8.5,24)});
+            marker_usr = new BMap.Marker(data.points[0], {icon: icon_usr});
+            map.addOverlay(marker_usr);
+            marker_usr.setTitle('Your position');
+
+            map.setCenter(data.points[0]);
+        }
+    };
+    convertor_usr.translate(points_usr, 1, 5, cbTranslate_usr);
+
+    function handleMouse(e) {
+        var index = $(this).index();
+        var iconSelect = new BMap.Icon('/images/radar.png', new BMap.Size(24, 24), {anchor: new BMap.Size(12, 12)});
+        var css_mouseover = {
+            'border': 'thick solid red'
+        };
+        if (e.type == 'mouseover'){
+          markers[index].setIcon(iconSelect);
+        }
+        if (e.type == 'mouseout'){
+          css_mouseover.border = '';
+          markers[index].setIcon(iconDefault);
+        }
+        $(this).css(css_mouseover);
+    }
+
+
+    $(function () {
+        $('.list-group-item').bind('mouseover mouseout', handleMouse);
+
+    });

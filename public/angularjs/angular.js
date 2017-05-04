@@ -2345,7 +2345,7 @@ function JQLite(element) {
   }
   if (!(this instanceof JQLite)) {
     if (isString(element) && element.charAt(0) != '<') {
-      throw jqLiteMinErr('nosel', 'Looking up elements via selectors is not supported by jqLite! See: http://docs.angularjs.org/api/angular.element');
+      throw jqLiteMinErr('nosel', 'Looking up elements via selectors is not supported by jqLite! See: http://items.angularjs.org/api/angular.element');
     }
     return new JQLite(element);
   }
@@ -8713,7 +8713,7 @@ function $InterpolateProvider() {
           throw $interpolateMinErr('noconcat',
               "Error while interpolating: {0}\nStrict Contextual Escaping disallows " +
               "interpolations that concatenate multiple expressions when a trusted value is " +
-              "required.  See http://docs.angularjs.org/api/ng.$sce", text);
+              "required.  See http://items.angularjs.org/api/ng.$sce", text);
       }
 
       if (!mustHaveExpression  || hasInterpolation) {
@@ -13741,7 +13741,7 @@ function $SceProvider() {
       throw $sceMinErr('iequirks',
         'Strict Contextual Escaping does not support Internet Explorer version < 9 in quirks ' +
         'mode.  You can fix this by adding the text <!doctype html> to the top of your HTML ' +
-        'document.  See http://docs.angularjs.org/api/ng.$sce for more information.');
+        'document.  See http://items.angularjs.org/api/ng.$sce for more information.');
     }
 
     var sce = shallowCopy(SCE_CONTEXTS);

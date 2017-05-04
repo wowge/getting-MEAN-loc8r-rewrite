@@ -73,6 +73,15 @@ function _showError(req, res, status) {
         content : content
     });
 }
+function renderLocationForm(req, res) {
+    res.render('location-form', {
+        title: 'Find a location',
+        pageHeader: {
+            title: 'New location'
+        },
+        err: req.query.err
+    });
+}
 function renderReviewForm(req, res, locDetail) {
     res.render('location-review-form', {
         title: 'Review ' + locDetail.name + ' on loc8r',
@@ -155,7 +164,13 @@ module.exports.locationInfo = function (req, res) {
         renderDetailPage(req, res, responseData);
     });
 };
+/* GET 'Add location' page */
+module.exports.addLocation = function (req, res) {
+    renderLocationForm(req, res);
+};
+module.exports.doAddLocation = function (req, res) {
 
+};
 /*  GET 'Add review' page  */
 module.exports.addReview = function (req, res) {
     getLocationInfo(req, res, function (req, res, responseData) {

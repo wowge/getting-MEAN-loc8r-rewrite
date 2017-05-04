@@ -66,15 +66,13 @@ module.exports.doRegister = function (req, res) {
            if (response.statusCode === 201){
                if (process.env.NODE_ENV === 'production'){
                    res
-                       .cookie('loc8r_token', body.token,{httpOnly:true, secure:true})
+                       .cookie('loc8r_token', body.token,{httpOnly:true, secure:true, SameSite: 'strict'})
                        .cookie('loc8r_user', body.user)
-                       .cookie('loc8r_email', body.email)
                        .redirect(req.query.lastPage ? req.query.lastPage : '/');
                }else {
                    res
-                       .cookie('loc8r_token', body.token,{httpOnly:false, secure:false})
+                       .cookie('loc8r_token', body.token,{httpOnly:false, secure:false, SameSite: 'strict'})
                        .cookie('loc8r_user', body.user)
-                       .cookie('loc8r_email', body.email)
                        .redirect(req.query.lastPage ? req.query.lastPage : '/');
                }
 
@@ -118,15 +116,13 @@ module.exports.doLogin = function (req, res) {
             if (response.statusCode === 201){
                 if (process.env.NODE_ENV === 'production'){
                     res
-                        .cookie('loc8r_token',body.token,{httpOnly:true, secure:true})
+                        .cookie('loc8r_token',body.token,{httpOnly:true, secure:true, SameSite: 'strict'})
                         .cookie('loc8r_user', body.user)
-                        .cookie('loc8r_email', body.email)
                         .redirect(req.query.lastPage ? req.query.lastPage : '/');
                 }else{
                     res
-                        .cookie('loc8r_token',body.token,{httpOnly:false, secure:false})
+                        .cookie('loc8r_token',body.token,{httpOnly:false, secure:false, SameSite: 'strict'})
                         .cookie('loc8r_user', body.user)
-                        .cookie('loc8r_email', body.email)
                         .redirect(req.query.lastPage ? req.query.lastPage : '/');
                 }
             }else if (response.statusCode === 400 && body.name && body.name === 'ValidationError'){

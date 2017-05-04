@@ -11,7 +11,7 @@ var sendJasonResponse = function (res, status, content) {
 var getAuthor = function (req, res, callback) {
     if (req.payload || req.payload.email){
         User
-            .findOne({email: req.payload.email})
+            .findById(req.payload._id)
             .exec(function (err, user) {
                 if (!user){
                     sendJasonResponse(res, 404, {

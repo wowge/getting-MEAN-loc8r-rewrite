@@ -8,6 +8,7 @@ block content
     .row.page-header
         .col-lg-12
             h1= pageHeader.title
+            #locName(style='display: none') #{pageHeader.title}
     .row
         .col-xs-12.col-md-9
             .row
@@ -36,13 +37,14 @@ block content
                                         | &nbsp;#{facility}
                                     | &nbsp;
                 .col-xs-12.col-sm-6.location-map
-                    .panel.panel-primary
+                    .panel.panel-primary(style='height: 350px')
                         .panel-heading
                             h2.panel-title Location map
-                        .panel-body
+                        #map.panel-body(style='height: 100%')
                             //img.img-rounded.img-responsive(src='http://api.map.baidu.com/staticimage/v2?ak=PqsHrAn1tdK4TQNnUZbZU8jvk6ipij6I&center=113.997061,22.532308&markers=113.997061,22.532308&scale=2&markerStyles=s,A,0xff0000&width=400&height=350&zoom=17')
-                            img.img-rounded.img-responsive(src='https://api.map.baidu.com/staticimage/v2?ak=PqsHrAn1tdK4TQNnUZbZU8jvk6ipij6I&width=400&height=350&scale=2&center=#{location.coords.lng},#{location.coords.lat}&labels=#{location.coords.lng},#{location.coords.lat}&zoom=18&labelStyles=cafe,1,40,0xffffff,0xff0000,1')
-
+                            //img.img-rounded.img-responsive(src='https://api.map.baidu.com/staticimage/v2?ak=PqsHrAn1tdK4TQNnUZbZU8jvk6ipij6I&width=400&height=350&scale=2&center=#{location.coords.lng},#{location.coords.lat}&zoom=18')
+                            #lng(style='display: none') #{location.coords.lng}
+                            #lat(style='display: none') #{location.coords.lat}
             .row
                 .col-xs-12
                     .panel.panel-primary.review-panel
@@ -62,16 +64,61 @@ block content
                                                 +formatDate(review.createOn)
                                         .col-xs-12
                                             p !{(review.reviewText).replace(/\n/g,'<br/>')}
-        .col-xs-12.col-md-3
+        .col-xs-12.col-md-3(style='height: 250px')
+            #panorama(style='height: 100%')
             p.lead #{location.name} #{sidebar.context}
             p #{sidebar.callToAction}
 block scripts
   script.
     if (!isLoggedIn()){
-        //console.log($('#add').prop('disabled'));
-        $('#add').hide();
-        $('#rmd').show();
+      //console.log($('#add').prop('disabled'));
+      $('#add').hide();
+      $('#rmd').show();
     }else {
       $('#add').show();
       $('#rmd').hide();
     }
+
+    var lng = parseFloat($('#lng').text());
+    var lat = parseFloat($('#lat').text());
+    var lng_usr = account.lng, lat_usr = account.lat;
+    var locName = $('#locName').text();
+
+    var map = new BMap.Map('map');
+    var point = new BMap.Point(lng, lat);
+    var scaleCtl = new BMap.ScaleControl();
+    var navCtl = new BMap.NavigationControl();
+    var panoCtl = new BMap.PanoramaControl();
+    panoCtl.setOffset(new BMap.Size(20, 20));
+    var panorama = new BMap.Panorama('panorama');
+
+    var convertor = new BMap.Convertor();
+    var pointArr = [];
+    pointArr.push(point);
+    var cbTranslate = function (data) {
+        if (data.status === 0) {
+            var marker = new BMap.Marker(data.points[0]);
+            map.addOverlay(marker);
+            marker.setTitle(locName);
+            map.centerAndZoom(data.points[0], 17);
+            map.addControl(scaleCtl);
+            map.addControl(navCtl);
+            map.addControl(panoCtl);
+
+            panorama.setPosition(data.points[0]);
+        }
+    };
+    convertor.translate(pointArr, 1, 5, cbTranslate);
+
+    var convertor_usr = new BMap.Convertor();
+    var points_usr = [], marker_usr;
+    points_usr.push(new BMap.Point(lng_usr, lat_usr));
+    var cbTranslate_usr = function (data) {
+        if (data.status === 0) {
+            var icon_usr = new BMap.Icon('/images/location.png', new BMap.Size(17, 24), {anchor: new BMap.Size(8.5,24)});
+            marker_usr = new BMap.Marker(data.points[0], {icon: icon_usr});
+            map.addOverlay(marker_usr);
+            marker_usr.setTitle('Your position');
+        }
+    };
+    convertor_usr.translate(points_usr, 1, 5, cbTranslate_usr);

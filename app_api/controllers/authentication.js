@@ -29,8 +29,7 @@ module.exports.register = function (req, res) {
             token = user.generateJwt();
             sendJsonResponse(res, 201, {
                 'token': token,
-                'user': user.name,
-                'email': user.email
+                'user': user.name
             });
         }
     });
@@ -53,8 +52,7 @@ module.exports.login = function (req, res) {
             token = user.generateJwt();
             sendJsonResponse(res, 201, {
                 'token': token,
-                'user': user.name,
-                'email': user.email
+                'user': user.name
             });
         }else {
             sendJsonResponse(res, 401, info);

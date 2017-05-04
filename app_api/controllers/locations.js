@@ -23,64 +23,74 @@ var sendJasonResponse = function (res, status, content) {
 };
 
 module.exports.locationsListByDistance = function (req, res) {
+    if (req.query.lng && req.query.lat){
         var lng = parseFloat(req.query.lng);
         var lat = parseFloat(req.query.lat);
-        User
-            .findById(req.payload._id)
-            .select('-hash -salt -email -name')
-            .exec(function (err, user) {
-                if (!user){
-                    sendJasonResponse(res, 404, {
-                        'message': 'User not found'
-                    });
-                    return;
-                }else if(err){
-                    sendJasonResponse(res, 400, err);
-                    return;
-                }
-                user.coords = [lng, lat];
-                user.save(function (err, user) {
-                    if (err){
-                        sendJasonResponse(res, 404, err);
-                    }
-                });
-            });
-        //console.log('lng:', lng, 'lat:', lat);
-        var point = {
-            type : 'Point',
-            coordinates : [lng, lat]
-        };
-        var geoOptions = {
-            spherical : true,
-            maxDistance : parseFloat(req.query.maxDistance),
-            num : 10
-        };
-        if ((!lng && lng !== 0) || (!lat && lat !== 0)){
-            sendJasonResponse(res, 404, {
-                'message': 'lng or lat parameter is incorrect'
-            });
-            return;
-        }
-
-        Loc.geoNear(point, geoOptions, function (err, results, stats) {
-            var Locations = [];
-            if (err){
-                sendJasonResponse(res, 404, err);
-            }else {
-                results.forEach(function (doc) {
-                    Locations.push({
-                        //distance : theEarth.getDistanceFromRads(doc.dis),
-                        distance : doc.dis,
-                        name : doc.obj.name,
-                        address : doc.obj.address,
-                        rating : doc.obj.rating,
-                        facilities : doc.obj.facilities,
-                        _id : doc.obj._id
-                    });
-                });
-                sendJasonResponse(res, 200, Locations);
-            }
+    }else {
+        sendJasonResponse(res, 404, {
+            'message': 'lng or lat parameter is incorrect'
         });
+        return;
+    }
+
+    User
+        .findById(req.payload._id)
+        .select('-hash -salt -email -name')
+        .exec(function (err, user) {
+            if (!user){
+                sendJasonResponse(res, 404, {
+                    'message': 'User not found'
+                });
+                return;
+            }else if(err){
+                sendJasonResponse(res, 400, err);
+                return;
+            }
+            user.coords = [lng, lat];
+            user.latest = Date.now();
+            user.save(function (err, user) {
+                if (err){
+                    sendJasonResponse(res, 404, err);
+                }
+            });
+        });
+    //console.log('lng:', lng, 'lat:', lat);
+    var point = {
+        type : 'Point',
+        coordinates : [lng, lat]
+    };
+    var geoOptions = {
+        spherical : true,
+        maxDistance : parseFloat(req.query.maxDistance),
+        num : 10
+    };
+    if ((!lng && lng !== 0) || (!lat && lat !== 0)){
+        sendJasonResponse(res, 404, {
+            'message': 'lng or lat parameter is incorrect'
+        });
+        return;
+    }
+
+    Loc.geoNear(point, geoOptions, function (err, results, stats) {
+        var Locations = [];
+        if (err){
+            sendJasonResponse(res, 404, err);
+        }else {
+            results.forEach(function (doc) {
+                Locations.push({
+                    //distance : theEarth.getDistanceFromRads(doc.dis),
+                    distance : doc.dis,
+                    name : doc.obj.name,
+                    address : doc.obj.address,
+                    rating : doc.obj.rating,
+                    facilities : doc.obj.facilities,
+                    coords: doc.obj.coords,
+                    _id : doc.obj._id
+                });
+            });
+            sendJasonResponse(res, 200, Locations);
+        }
+    });
 };
 module.exports.locationsCreate = function (req, res) {
     Loc.create({
