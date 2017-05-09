@@ -8,7 +8,108 @@ block content
     .col-xs-12
       h1 #{pageHeader.title}
   .row
-    .col-xs-12.col-md-6
+    .col-xs-12.col-md-8
       form#addLocation.form-horizontal(action='' method='post' role='form')
         - if (err === 'val')
-          .alert.alert-danger(role='alert') All fields required, please try again!
+          .alert.alert-danger(role='alert') Some fields required, please try again!
+        input#lng(style='display: none' name = 'lng')
+        input#lat(style='display: none' name = 'lat')
+        .form-group.required
+          label.col-xs-10.col-sm-2.control-label(for='name') Name
+          .col-xs-12.col-sm-10
+            input#name.form-control(type='text' name='name')
+        .form-group
+          label.col-xs-10.col-sm-2.control-label(for='address') Address
+          .col-xs-12.col-sm-10
+            input#address.form-control(type='text' name='address')
+        .row
+          .col-xs-4
+            .form-group
+              label.col-xs-12.control-label.col-xs-pull-5(for='days') Days
+              .col-xs-12
+                input#days.form-control(type='text' name='days')
+          .col-xs-4
+            .form-group
+              label.col-xs-12.col-xs-pull-5.control-label(for='opening') Opening
+              .col-xs-12
+                .input-group.bootstrap-timepicker
+                  input#opening.form-control(type='text' name='opening')
+                  span.input-group-addon
+                    i.glyphicon.glyphicon-time
+          .col-xs-4
+            .form-group
+              label.col-xs-12.col-xs-pull-5.control-label(for='closing') Closing
+              .col-xs-12
+                .input-group.bootstrap-timepicker
+                  input#closing.form-control(type='text' name='closing')
+                  span.input-group-addon
+                    i.glyphicon.glyphicon-time
+        .form-group.required
+          label.col-xs-10.col-sm-6.control-label(for='facilities') Facilities(seprated with ,)
+          .col-xs-12.col-sm-6
+            input#facilities.form-control(type='text' name='facilities')
+        button#addButton.btn.btn-default.pull-right Add
+    .col-xs-12.col-sm-4(style='height: 300px')
+      #map(style='height: 100%')
+block scripts
+  script.
+      if (!isLoggedIn()) {
+          //console.log($('#add').prop('disabled'));
+          $('#add').hide();
+          $('#rmd').show();
+      } else {
+          $('#add').show();
+          $('#rmd').hide();
+      }
+      $('#opening,#closing').timepicker('setTime', '');
+
+      var lng_usr = account.lng, lat_usr = account.lat;
+      var map = new BMap.Map('map');
+      var scaleCtl = new BMap.ScaleControl();
+      var navCtl = new BMap.NavigationControl();
+      var panoCtl = new BMap.PanoramaControl();
+      panoCtl.setOffset(new BMap.Size(20, 20));
+
+      var convertor_usr = new BMap.Convertor();
+      var points_usr = [], marker_usr;
+      points_usr.push(new BMap.Point(lng_usr, lat_usr));
+      var cbTranslate_usr = function (data) {
+          if (data.status === 0) {
+              marker_usr = new BMap.Marker(data.points[0]);
+              map.addOverlay(marker_usr);
+              marker_usr.setTitle('Your position');
+              map.centerAndZoom(data.points[0], 17);
+              map.addControl(scaleCtl);
+              map.addControl(navCtl);
+              map.addControl(panoCtl);
+          }
+      };
+      convertor_usr.translate(points_usr, 1, 5, cbTranslate_usr);
+
+      $('#lng').val(lng_usr);
+      $('#lat').val(lat_usr);
+
+      $(function () {
+          $('#name').focus();
+
+      });
+      $('#addButton').click(function () {
+          $('#addLocation').validate({
+              rules: {
+                  name: {
+                      required: true,
+                      maxlength: 50
+                  },
+                  facilities: {
+                      required: true,
+                      maxlength: 100
+                  }
+              }
+          });
+
+          $('input').each(function (index, obj) {
+              if ($(obj).val() == ''){
+                  $(obj).remove();
+              }
+          });
+      });

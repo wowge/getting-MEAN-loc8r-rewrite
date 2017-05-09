@@ -16,15 +16,16 @@ block content
             //input#filter(type='text' name='filter' ng-model='textFilter')
             #error.error= message
             //.error {{message}}
-            a.btn.btn-default.pull-right.btn-md(href='/location/new') Add location
+            a#addBtn.btn.btn-default.pull-right.btn-md(href='/new') Add location
             .row.list-group
                 each location in locations
                     .col-xs-12.list-group-item
+                      a.thumbnail(href='/location/#{location._id}')
                         .lng(style='display: none') #{location.coords[0]}
                         .lat(style='display: none') #{location.coords[1]}
                         .name(style='display: none') #{location.name}
                         h4
-                            a(href='/location/#{location._id}')= location.name
+                            = location.name
                             //a(href='/location/{{location._id}}') {{location.name}}&nbsp;
                             small(rating-stars rating='location.rating')
                                 +outputRating(location.rating)
@@ -47,11 +48,20 @@ block content
 
 block scripts
   script.
+    if (!isLoggedIn()) {
+        $('#error').prop('textContent', 'Login first, then enjoy loc8r!');
+        $('#addBtn')
+            .bind('mouseover mouseout', function (e) {
+                if (e.type == 'mouseover'){
+                    $(this).append('(Login first)').css('pointer-events', 'none');
+                }
+
+            });
+    }
+
     var lng = [], lat = [], locName = [];
     var lng_usr = account.lng, lat_usr = account.lat;
-    if (!isLoggedIn()){
-        $('#error').prop('textContent', 'Login first, then enjoy loc8r!');
-    }
+
     $('.lng').each(function (index, elem) {
         lng[index] = parseFloat($(elem).text());
     });
@@ -124,16 +134,18 @@ block scripts
         var index = $(this).index();
         var iconSelect = new BMap.Icon('/images/radar.png', new BMap.Size(24, 24), {anchor: new BMap.Size(12, 12)});
         var css_mouseover = {
-            'border': 'thick solid red'
+            'border': 'solid green'
         };
         if (e.type == 'mouseover'){
           markers[index].setIcon(iconSelect);
+          map.setCenter(markers[index].getPosition());
         }
         if (e.type == 'mouseout'){
           css_mouseover.border = '';
           markers[index].setIcon(iconDefault);
+          map.setCenter(marker_usr.getPosition());
         }
-        $(this).css(css_mouseover);
+        //$(this).css(css_mouseover);
     }
 
 

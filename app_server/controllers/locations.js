@@ -75,7 +75,7 @@ function _showError(req, res, status) {
 }
 function renderLocationForm(req, res) {
     res.render('location-form', {
-        title: 'Find a location',
+        title: 'New location',
         pageHeader: {
             title: 'New location'
         },
@@ -130,7 +130,7 @@ module.exports.homelist = function (req, res) {
         qs : {
             lng : req.cookies.loc8r_lng,
             lat : req.cookies.loc8r_lat,
-            maxDistance : 10000
+            maxDistance : 1000
         },
         headers: {
             Authorization: 'Bearer ' + req.cookies.loc8r_token
@@ -150,7 +150,7 @@ module.exports.homelist = function (req, res) {
             //console.log(body);
             renderHomepage(req, res, body);
         }else {
-            //console.log(body);
+            console.log(body);
             _showError(req, res, response.statusCode);
         }
 
@@ -169,7 +169,45 @@ module.exports.addLocation = function (req, res) {
     renderLocationForm(req, res);
 };
 module.exports.doAddLocation = function (req, res) {
-
+    var postData, path, requestOptions;
+    //console.log(req.body);
+    postData = {
+        lng: req.body.lng,
+        lat: req.body.lat,
+        name: req.body.name,
+        address: req.body.address,
+        days: req.body.days,
+        opening: req.body.opening,
+        closing: req.body.closing,
+        facilities: req.body.facilities
+    };
+    path = '/api/locations';
+    requestOptions = {
+        url : apiOptions.server + path,
+        method: 'post',
+        json: postData,
+        headers: {
+            Authorization: 'Bearer' + ' ' + req.cookies.loc8r_token
+        }
+    };
+    if (!postData.name || !postData.facilities){
+        res.redirect('/new?err=val');
+    }else {
+        request(requestOptions, function (err, response, body) {
+            if (response.statusCode === 201){
+                console.log(response);
+                res.redirect('/location/' + body._id);
+            }else if (response.statusCode === 400 && body.name && body.name === 'ValidationError'){
+                console.log(body);
+                res.redirect('/new?err=val');
+            }else if (response.statusCode === 401){
+                console.log(body);
+                res.redirect('/login?err=auth');
+            }else {
+                _showError(req, res, response.statusCode);
+            }
+        });
+    }
 };
 /*  GET 'Add review' page  */
 module.exports.addReview = function (req, res) {
@@ -183,7 +221,8 @@ module.exports.doAddReview = function (req, res) {
     postData = {
         author : req.body.name,
         rating : parseInt(req.body.rating, 10),
-        reviewText : req.body.review
+        reviewText : req.body.review,
+        createOn: Date.now()
     };
     path = '/api/locations/' + locationid +'/reviews';
     requestOptions = {

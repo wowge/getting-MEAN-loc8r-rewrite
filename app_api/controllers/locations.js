@@ -32,28 +32,30 @@ module.exports.locationsListByDistance = function (req, res) {
         });
         return;
     }
-
-    User
-        .findById(req.payload._id)
-        .select('-hash -salt -email -name')
-        .exec(function (err, user) {
-            if (!user){
-                sendJasonResponse(res, 404, {
-                    'message': 'User not found'
-                });
-                return;
-            }else if(err){
-                sendJasonResponse(res, 400, err);
-                return;
-            }
-            user.coords = [lng, lat];
-            user.latest = Date.now();
-            user.save(function (err, user) {
-                if (err){
-                    sendJasonResponse(res, 404, err);
+    if (req.payload && req.payload._id){
+        User
+            .findById(req.payload._id)
+            .select('-hash -salt -email -name')
+            .exec(function (err, user) {
+                if (!user){
+                    sendJasonResponse(res, 404, {
+                        'message': 'User not found'
+                    });
+                    return;
+                }else if(err){
+                    sendJasonResponse(res, 400, err);
+                    return;
                 }
+                user.coords = [lng, lat];
+                user.latest = Date.now();
+                user.save(function (err, user) {
+                    if (err){
+                        sendJasonResponse(res, 404, err);
+                    }
+                });
             });
-        });
+    }
+
     //console.log('lng:', lng, 'lat:', lat);
     var point = {
         type : 'Point',
@@ -74,6 +76,7 @@ module.exports.locationsListByDistance = function (req, res) {
     Loc.geoNear(point, geoOptions, function (err, results, stats) {
         var Locations = [];
         if (err){
+            //console.log(err);
             sendJasonResponse(res, 404, err);
         }else {
             results.forEach(function (doc) {
@@ -88,6 +91,7 @@ module.exports.locationsListByDistance = function (req, res) {
                     _id : doc.obj._id
                 });
             });
+            console.log(Locations);
             sendJasonResponse(res, 200, Locations);
         }
     });
@@ -100,20 +104,36 @@ module.exports.locationsCreate = function (req, res) {
         //rating : req.body.rating,
         coords : [parseFloat(req.body.lng),parseFloat(req.body.lat)],
         openingTimes : [{
-            days : req.body.days1,
-            opening : req.body.opening1,
-            closing : req.body.closing1,
-            closed : req.body.closed1
-        },{
-            days : req.body.days2,
-            opening : req.body.opening2,
-            closing : req.body.closing2,
-            closed : req.body.closed2
-        }]
+            days : req.body.days,
+            opening : req.body.opening,
+            closing : req.body.closing
+            //closed : req.body.closed
+        }],
+        author: req.payload._id
     },function (err, location) {
         if (err){
             sendJasonResponse(res, 400, err);
         }else {
+            User
+                .findById(location.author)
+                .select('-hash -salt -email -name -coords -latest')
+                .exec(function (err, user) {
+                    if (!user){
+                        sendJasonResponse(res, 404, {
+                            'message': 'User not found'
+                        });
+                        return;
+                    }else if (err){
+                        sendJasonResponse(res, 400, err);
+                        return;
+                    }
+                    user.createdLocations.push(location._id);
+                    user.save(function (err, user) {
+                        if (err){
+                            sendJasonResponse(res, 404, err);
+                        }
+                    });
+                });
             sendJasonResponse(res, 201, location);
         }
     })
@@ -122,6 +142,7 @@ module.exports.locationsReadOne = function (req, res) {
     if(req.params && req.params.locationid){
         Loc
             .findById(req.params.locationid)
+            .populate('author', 'name')
             .exec(function (err,location) {
                 if (!location){
                     sendJasonResponse(res, 404, {
@@ -132,6 +153,7 @@ module.exports.locationsReadOne = function (req, res) {
                     sendJasonResponse(res, 404, err);
                     return;
                 }
+                //console.log(location);
                 sendJasonResponse(res, 200, location);
 
             });

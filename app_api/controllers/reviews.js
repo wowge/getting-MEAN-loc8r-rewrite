@@ -9,7 +9,7 @@ var sendJasonResponse = function (res, status, content) {
     res.json(content);
 };
 var getAuthor = function (req, res, callback) {
-    if (req.payload || req.payload.email){
+    if (req.payload || req.payload._id){
         User
             .findById(req.payload._id)
             .exec(function (err, user) {
@@ -71,7 +71,8 @@ var doAddReview = function (req, res, location, author) {
         //author : req.body.author,
         author: author,
         rating : req.body.rating,
-        reviewText : req.body.reviewText
+        reviewText : req.body.reviewText,
+        createOn: req.body.createOn
     });
     location.save(function (err, location) {
         var thisReview;

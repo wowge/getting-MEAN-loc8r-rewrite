@@ -26,7 +26,8 @@ var userSchema = new mongoose.Schema({
         default: Date.now()
     },
     salt: String,
-    hash: String
+    hash: String,
+    createdLocations:[{type: mongoose.Schema.Types.ObjectId, ref: 'Location'}]
 });
 userSchema.methods.setPassword = function (password) {
     this.salt = crypto.randomBytes(16).toString('hex');

@@ -8,3 +8,7 @@
 #filter{
     margin-left: 4px;
 }
+.form-group.required .control-label:after{
+    color: red;
+    content: '*'
+}

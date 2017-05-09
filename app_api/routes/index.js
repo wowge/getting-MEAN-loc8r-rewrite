@@ -17,7 +17,7 @@ var auth = jwt({
 });
 
 router.get('/locations', auth, ctrlLocations.locationsListByDistance);
-router.post('/locations',ctrlLocations.locationsCreate);
+router.post('/locations', auth, ctrlLocations.locationsCreate);
 router.get('/locations/:locationid',ctrlLocations.locationsReadOne);
 router.put('/locations/:locationid',ctrlLocations.locationsUpdateOne);
 router.delete('/locations/:locationid',ctrlLocations.locationsDeleteOne);
