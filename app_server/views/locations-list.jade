@@ -10,41 +10,49 @@ block content
             .col-lg-6
                 h1= pageHeader.title
                     small &nbsp;#{pageHeader.strapline}
-    .row
-        .col-xs-12.col-sm-8
-            //label(for='filter') Filter results
-            //input#filter(type='text' name='filter' ng-model='textFilter')
-            #error.error= message
-            //.error {{message}}
-            a#addBtn.btn.btn-default.pull-right.btn-md(href='/new') Add location
-            .row.list-group
+        .row
+          .col-xs-6
+            .col-xs-12
+              //label(for='filter') Filter results
+              //input#filter(type='text' name='filter' ng-model='textFilter')
+              #error.error= message
+              //.error {{message}}
+              a#addBtn.btn.btn-default.pull-right.btn-md(href='/new') Add location
+              .row.list-group
                 each location in locations
-                    .col-xs-12.list-group-item
-                      a.thumbnail(href='/location/#{location._id}')
-                        .lng(style='display: none') #{location.coords[0]}
-                        .lat(style='display: none') #{location.coords[1]}
-                        .name(style='display: none') #{location.name}
-                        h4
-                            = location.name
-                            //a(href='/location/{{location._id}}') {{location.name}}&nbsp;
-                            small(rating-stars rating='location.rating')
-                                +outputRating(location.rating)
-                                //|{{location.rating}}
-                            span.badge.pull-right.badge-default= location.distance
-                            //span.badge.pull-right.badge-default {{location.distance | formatDistance}}
-                        p.address= location.address
-                        //p.address {{location.address}}
-                        p
-                            each facility in location.facilities
-                                span.label.label-warning= facility
-                                | &nbsp;
-                            //span.label.label-warning(ng-repeat='facility in location.facilities')
-                                | {{facility}}
+                  .col-xs-12.list-group-item(id='#{location._id}')
+                    a.thumbnail(href='/location/#{location._id}')
+                      .lng(style='display: none') #{location.coords[0]}
+                      .lat(style='display: none') #{location.coords[1]}
+                      .name(style='display: none') #{location.name}
+                      h4
+                        = location.name
+                        //a(href='/location/{{location._id}}') {{location.name}}&nbsp;
+                        small(rating-stars rating='location.rating')
+                          +outputRating(location.rating)
+                          //|{{location.rating}}
+                        span.badge.pull-right.badge-default= location.distance
+                        //span.badge.pull-right.badge-default {{location.distance | formatDistance}}
+                      p.address= location.address
+                      //p.address {{location.address}}
+                      p
+                        each facility in location.facilities
+                          span.label.label-warning= facility
+                          | &nbsp;
+                        //span.label.label-warning(ng-repeat='facility in location.facilities')
+                            | {{facility}}
 
-
-        .col-xs-12.col-sm-4(style='height: 300px')
-            p.lead= sidebar
-            #map(style='height: 100%')
+          .col-xs-6
+              nav.affix(style='width: 25%')
+                .col-xs-12(style='height: 300px')
+                  #map(style='height: 100%')
+                .col-xs-12
+                  ul.nav Locations
+                    each location in locations
+                      li
+                        a(href='##{location._id}') #{location.name}
+                    li
+                      a(href='#top') back to top
 
 block scripts
   script.
@@ -150,6 +158,6 @@ block scripts
 
 
     $(function () {
-        $('.list-group-item').bind('mouseover mouseout', handleMouse);
+        $('li',$('.nav')).bind('mouseover mouseout', handleMouse);
 
     });
