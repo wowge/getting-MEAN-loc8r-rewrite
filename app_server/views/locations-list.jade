@@ -43,11 +43,11 @@ block content
                             | {{facility}}
 
           .col-xs-6
-              nav.affix(style='width: 25%')
-                .col-xs-12(style='height: 300px')
+              nav.affix(style='width: 50%;height: 100%')
+                .col-xs-12(style='height: 50%')
                   #map(style='height: 100%')
-                .col-xs-12
-                  ul.nav Locations
+                .col-xs-12(style='height: 50%')
+                  ul.nav(style='max-height:300px;overflow:auto') Locations
                     each location in locations
                       li
                         a(href='##{location._id}') #{location.name}
