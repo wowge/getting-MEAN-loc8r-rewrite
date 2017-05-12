@@ -1,5 +1,5 @@
 /**
- * Created by gechao on 14/04/2017.
+ *
  */
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;

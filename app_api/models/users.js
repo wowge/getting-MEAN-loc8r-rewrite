@@ -1,5 +1,5 @@
 /**
- * Created by gechao on 12/04/2017.
+ *
  */
 var crypto = require('crypto');
 var mongoose = require('mongoose');

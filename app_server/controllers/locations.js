@@ -1,5 +1,5 @@
 /**
- * Created by gechao on 13/02/2017.
+ *
  */
 /*  GET 'home' page  */
 var request = require('request');
@@ -7,7 +7,7 @@ var apiOptions = {
     server : 'http://localhost:3000'
 };
 if (process.env.NODE_ENV === 'production'){
-    apiOptions.server = 'https://loc8r4u.herokuapp.com';
+    apiOptions.server = ''; //Your heroku app's url
 }
 
 //function renderHomepage(req, res, responseBody) {

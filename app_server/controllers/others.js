@@ -1,12 +1,12 @@
 /**
- * Created by gechao on 09/02/2017.
+ *
  */
 var request = require('request');
 var apiOptions = {
     server: 'http://localhost:3000'
 };
 if (process.env.NODE_ENV === 'production'){
-    apiOptions.server = 'https://loc8r4u.herokuapp.com';
+    apiOptions.server = ''; //Your heroku app's url
 }
 
 function _showError(req, res, status) {
@@ -26,7 +26,7 @@ function _showError(req, res, status) {
 module.exports.about = function(req, res, next) {
     res.render('generic-text', {
         title: 'About loc8r',
-        content: 'loc8r was created to help people find places to sit down and get a bit of work done. \n\ncopyright Charles shenzhen'
+        content: 'loc8r was created to help people find places to sit down and get a bit of work done. \n\ncopyright Loc8r'
     });
 };
 module.exports.angularApp = function (req, res, next) {

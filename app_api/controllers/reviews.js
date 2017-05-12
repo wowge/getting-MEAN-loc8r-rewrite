@@ -1,5 +1,5 @@
 /**
- * Created by gechao on 20/03/2017.
+ *
  */
 var mongoose = require('mongoose');
 var Loc = mongoose.model('Location');

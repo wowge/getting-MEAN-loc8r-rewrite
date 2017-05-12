@@ -1,5 +1,5 @@
 /**
- * Created by gechao on 20/04/2017.
+ *
  */
 var cbSuccess = function (position) {
     //console.log(position.coords.longitude, position.coords.latitude, '//lng lat');

@@ -1,5 +1,5 @@
 /**
- * Created by gechao on 01/04/2017.*/
+ * */
 
 angular.module('loc8rApp', []);
 

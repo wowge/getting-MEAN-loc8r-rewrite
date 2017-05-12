@@ -1,5 +1,5 @@
 /**
- * Created by gechao on 09/03/2017.
+ *
  */
 var mongoose = require('mongoose');
 var gracefulShutdown;

@@ -15,7 +15,7 @@ var app = express();
 app.use(helmet());
 app.get('*', function (req, res, next) {
     if (req.header('x-forwarded-proto') !== 'https' && process.env.NODE_ENV === 'production'){
-        res.redirect('https://loc8r4u.herokuapp.com');
+        res.redirect(''); //Your heroku app's url
     }else {
         next();
     }
