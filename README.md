@@ -20,6 +20,6 @@
 ---|---
 1|~~AngularJS~~基于Express改写
 2|~~localStorage~~使用cookie
-3|:heavy_plus_sign:提交地点信息
-4|~~google map~~使用百度地图API
-5|:heavy_plus_sign:显示用户和地点的位置
+3|~~google map~~使用百度地图API
+4|提交地点信息
+5|显示用户和地点的位置
